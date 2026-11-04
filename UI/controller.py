@@ -18,7 +18,35 @@ class Controller:
         self.genere_selezionato = None
 
     # POPOLA DROPDOWN
-    # TODO
+    def handler_btn_biblioteche(self, e):
+
+        biblioteche = self._model.get_biblioteche()
+        if biblioteche is None:
+            self._view.show_alert("devi scegliere una biblioteca!")
+            return
+
+        self._view.dd.options.clear()
+
+
+        for b in biblioteche:
+            (self._view.dd.options.append(ft.dropdown.Option(key=str(b.id), text= str(b.nome))))
+        self._view.update()
+
+
+
+
+    def handler_genere(self,e):
+        generi= self._model.get_generi()
+        if generi is None:
+            self._view.show_alert("scegli un genere!")
+            return
+
+        self._view.dd_genere.options.clear()
+        for g in generi:
+            self._view.dd_genere.options.append(ft.dropdown.Option(text=str(g)))
+        self._view.update()
+
+
 
     # CALLBACKS DROPDOWN
     # TODO

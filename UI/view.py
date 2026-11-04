@@ -1,5 +1,7 @@
 import flet as ft
 from UI.alert import AlertManager
+from database import biblioteca_DAO
+from model.model import Model
 
 '''
     VIEW:
@@ -21,6 +23,10 @@ class View:
         # Controller
         self.controller = None
 
+        self.dd= None
+
+        self.list_view = None
+
     def show_alert(self, messaggio):
         self.alert.show_alert(messaggio)
 
@@ -36,7 +42,20 @@ class View:
         self.txt_titolo = ft.Text(value="Biblioteche di Torino", size=38, weight=ft.FontWeight.BOLD)
 
         # --- Sezione 2: Filtraggio ---
-        # TODO
+        self.dd= ft.Dropdown(label="Biblioteche", on_select=self.controller.handler_btn_biblioteche)
+
+        biblioteche= self.controller._model.get_biblioteche()
+
+        for b in biblioteche:
+            self.dd.options.append(ft.dropdown.Option(key=str(b.id), text=str(b.nome)))
+
+
+#parte due genere
+        self.dd_genere= ft.Dropdown(label="Genere", on_select=self.controller.handler_genere)
+        generi= self.controller._model.get_generi()
+        for g in generi:
+            self.dd_genere.options.append(ft.dropdown.Option(text=str(g)))
+
 
         # Sezione 3: Libri
         # TODO
@@ -53,7 +72,9 @@ class View:
             ft.Divider(),
 
             # Sezione 2: Filtraggio
-            # TODO
+            self.dd,
+            self.dd_genere
+
 
             # Sezione 3: Libri
             # TODO

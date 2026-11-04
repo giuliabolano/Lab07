@@ -10,4 +10,20 @@ class BibliotecaDAO:
     def __init__(self):
         pass
 
-    # TODO
+    #metoto per leggere dal database tutte i nomi delle biblioteche presenti
+    def leggere_nomi_biblioteche(self):
+        cnx= DBConnect.get_connection()
+        if cnx is not None:
+            print("Connection established")
+
+            query= "SELECT id, nome, indirizzo FROM biblioteca"
+            cursor= cnx.cursor()
+            cursor.execute(query)
+            nomi_b= []
+            for row in cursor:
+                biblioteca= Biblioteca(*row)
+                nomi_b.append(biblioteca)
+            cursor.close()
+            cnx.close()
+            return nomi_b
+
