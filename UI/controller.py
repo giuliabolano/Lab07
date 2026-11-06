@@ -49,7 +49,32 @@ class Controller:
 
 
     # CALLBACKS DROPDOWN
-    # TODO
+    # gstione della selezione dell'utente salvandola nelle variabili
+    def handler_dd_biblioteca(self, e):
+        self.biblioteca_selezionata = self._view.dd.value
+
+    def handler_dd_genere(self, e):
+        self.genere_selezionato = self._view.dd_genere.value
 
     # AZIONE: MOSTRA LIBRI
-    # TODO
+    # logica che verifica i filtri, interroga il model e aggiorna la schermata
+    def handler_mostra_libri(self, e):
+        # Controllo se almeno un filtro è stato selezionato (opzionale o richiesto a seconda dei casi)
+        if self.biblioteca_selezionata is None and self.genere_selezionato is None:
+            self._view.show_alert("Seleziona almeno una biblioteca o un genere!")
+            return
+
+        # Chiamata al model per recuperare i libri filtrati
+        libri = self._model.get_libri_filtrati(self.biblioteca_selezionata, self.genere_selezionato)
+
+        # Pulisci la lista visiva precedente
+        self._view.list_view.controls.clear()
+
+        if not libri:
+            self._view.show_alert("Nessun libro trovato con i criteri selezionati.")
+        else:
+            for libro in libri:
+                self._view.list_view.controls.append(ft.Text(str(libro)))
+
+        self._view.update()
+

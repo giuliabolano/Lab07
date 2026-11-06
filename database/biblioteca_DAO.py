@@ -26,4 +26,3 @@ class BibliotecaDAO:
             cursor.close()
             cnx.close()
             return nomi_b
-

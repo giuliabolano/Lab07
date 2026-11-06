@@ -22,10 +22,9 @@ class View:
 
         # Controller
         self.controller = None
-
         self.dd= None
-
         self.list_view = None
+        self.btn_mostra= None
 
     def show_alert(self, messaggio):
         self.alert.show_alert(messaggio)
@@ -42,7 +41,7 @@ class View:
         self.txt_titolo = ft.Text(value="Biblioteche di Torino", size=38, weight=ft.FontWeight.BOLD)
 
         # --- Sezione 2: Filtraggio ---
-        self.dd= ft.Dropdown(label="Biblioteche", on_select=self.controller.handler_btn_biblioteche)
+        self.dd= ft.Dropdown(label="Bibliotehe", on_select=self.controller.handler_dd_biblioteca)
 
         biblioteche= self.controller._model.get_biblioteche()
 
@@ -51,14 +50,16 @@ class View:
 
 
 #parte due genere
-        self.dd_genere= ft.Dropdown(label="Genere", on_select=self.controller.handler_genere)
+        self.dd_genere= ft.Dropdown(label="Genere", on_select=self.controller.handler_dd_genere)
         generi= self.controller._model.get_generi()
         for g in generi:
             self.dd_genere.options.append(ft.dropdown.Option(text=str(g)))
 
 
         # Sezione 3: Libri
-        # TODO
+        # aggiungo il pulsante e la listview
+        self.btn_mostra = ft.Button(content=ft.Text("Mostra i libri"), on_click=self.controller.handler_mostra_libri)
+        self.list_view = ft.ListView(expand=True, spacing=5, padding=10),
 
         # --- Toggle Tema ---
         self.toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=self.cambia_tema)
@@ -73,11 +74,14 @@ class View:
 
             # Sezione 2: Filtraggio
             self.dd,
-            self.dd_genere
+            self.dd_genere,
 
 
             # Sezione 3: Libri
-            # TODO
+            #aggiungo i pulsanti e la listview all'interno dei controlli
+            self.btn_mostra,
+            self.list_view
+
         )
 
         self.page.scroll = "adaptive"

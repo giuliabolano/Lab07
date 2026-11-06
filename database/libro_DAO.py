@@ -17,13 +17,13 @@ class LibroDAO:
         if cnx is not None:
             print("Connection established")
 
-            query = "SELECT genere FROM libro WHERE genere = COALESCE(%s, genere)"
-            cursor = cnx.cursor()
+            query = "SELECT DISTINCT genere FROM libro WHERE genere IS NOT NULL"
+            cursor = cnx.cursor(dictionary=True)
             cursor.execute(query)
             risultato = []
             for row in cursor:
-                libro = Libro(*row)
-                risultato.append(libro)
+                #row[0] è la colonna del genere e la aggiungiamo direttamente
+                risultato.append(row['genere'])
             cursor.close()
             cnx.close()
             return risultato
@@ -36,11 +36,11 @@ class LibroDAO:
         if cnx is not None:
             print("Connection established")
 
-            query = f"""SELECT * FROM libro l
-                        WHERE l.id_biblioteca = b.id AND genere= coalesce(%s,genere)"""
+            query = """SELECT * FROM libro l
+                        WHERE l.id_biblioteca = COALESCE(%s, l.id_biblioteca) AND genere= COALESCE(%s,genere)"""
 
-            cursor = cnx.cursor(dictionary=True)
-            cursor.execute(query, genere)
+            cursor = cnx.cursor()
+            cursor.execute(query, (biblioteca, genere))
             risultato = []
             for row in cursor:
                 libro = Libro(*row)
