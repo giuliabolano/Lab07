@@ -10,41 +10,42 @@ class LibroDAO:
     def __init__(self):
         pass
 
-    #metodo per leggere i generi dalla tabella libro nel database
-    def leggere_genere_libri(self):
+    # Leggo i generi dei libri dal db
 
+    def leggere_genere(self):
         cnx = DBConnect.get_connection()
         if cnx is not None:
             print("Connection established")
 
-            query = "SELECT DISTINCT genere FROM libro WHERE genere IS NOT NULL"
-            cursor = cnx.cursor(dictionary=True)
+            query = "SELECT DISTINCT genere FROM libro"
+            cursor = cnx.cursor()
             cursor.execute(query)
-            risultato = []
+            result = []
             for row in cursor:
-                #row[0] è la colonna del genere e la aggiungiamo direttamente
-                risultato.append(row['genere'])
+                result.append(row[0]) # estraggo una sola colonna
             cursor.close()
             cnx.close()
-            return risultato
 
+        return result
 
-#metoto che legge i libri filtrati
+    # leggo i libri filtrati dal DB
+
     def leggere_libri_filtrati(self, biblioteca, genere):
-
         cnx = DBConnect.get_connection()
         if cnx is not None:
             print("Connection established")
 
-            query = """SELECT * FROM libro l
-                        WHERE l.id_biblioteca = COALESCE(%s, l.id_biblioteca) AND genere= COALESCE(%s,genere)"""
-
+            query = """SELECT l.titolo
+                   FROM libro l, biblioteca b
+                   WHERE l.id_biblioteca = b.id
+                     AND b.nome = COALESCE(%s, b.nome)
+                     AND l.genere = COALESCE(%s, l.genere)"""
             cursor = cnx.cursor()
             cursor.execute(query, (biblioteca, genere))
-            risultato = []
+            result = []
             for row in cursor:
-                libro = Libro(*row)
-                risultato.append(libro)
+                result.append(row[0])
             cursor.close()
             cnx.close()
-            return risultato
+
+            return result

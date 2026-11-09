@@ -1,13 +1,13 @@
 import flet as ft
 from UI.alert import AlertManager
 from database import biblioteca_DAO
-from model.model import Model
 
 '''
     VIEW:
     - Rappresenta l'interfaccia utente
     - Riceve i dati dal MODELLO e li presenta senza modificarli
 '''
+
 
 class View:
     def __init__(self, page: ft.Page):
@@ -22,9 +22,10 @@ class View:
 
         # Controller
         self.controller = None
-        self.dd= None
+        self.dd = None
+        self.dd_g = None
+        self.btn_mostra = None
         self.list_view = None
-        self.btn_mostra= None
 
     def show_alert(self, messaggio):
         self.alert.show_alert(messaggio)
@@ -41,25 +42,14 @@ class View:
         self.txt_titolo = ft.Text(value="Biblioteche di Torino", size=38, weight=ft.FontWeight.BOLD)
 
         # --- Sezione 2: Filtraggio ---
-        self.dd= ft.Dropdown(label="Bibliotehe", on_select=self.controller.handler_dd_biblioteca)
 
-        biblioteche= self.controller._model.get_biblioteche()
+        self.dd = ft.Dropdown(label="Biblioteca", width=300, on_select=self.controller.handler_dd_biblioteca)
 
-        for b in biblioteche:
-            self.dd.options.append(ft.dropdown.Option(key=str(b.id), text=str(b.nome)))
-
-
-#parte due genere
-        self.dd_genere= ft.Dropdown(label="Genere", on_select=self.controller.handler_dd_genere)
-        generi= self.controller._model.get_generi()
-        for g in generi:
-            self.dd_genere.options.append(ft.dropdown.Option(text=str(g)))
-
+        self.dd_g = ft.Dropdown(label="Genere", width=300, on_select=self.controller.handler_dd_genere)
 
         # Sezione 3: Libri
-        # aggiungo il pulsante e la listview
-        self.btn_mostra = ft.Button(content=ft.Text("Mostra i libri"), on_click=self.controller.handler_mostra_libri)
-        self.list_view = ft.ListView(expand=True, spacing=5, padding=10),
+        self.btn_mostra = ft.Button(content="Mostra Libri", on_click=self.controller.handler_mostra_libri)
+        self.list_view = ft.ListView(expand=True, spacing=5)
 
         # --- Toggle Tema ---
         self.toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=self.cambia_tema)
@@ -73,19 +63,18 @@ class View:
             ft.Divider(),
 
             # Sezione 2: Filtraggio
-            self.dd,
-            self.dd_genere,
-
+            ft.Row([self.dd, self.dd_g], alignment=ft.Alignment.CENTER),
 
             # Sezione 3: Libri
-            #aggiungo i pulsanti e la listview all'interno dei controlli
             self.btn_mostra,
-            self.list_view
-
+            self.list_view,
         )
 
         self.page.scroll = "adaptive"
         self.page.update()
+
+        self.controller.handler_btn_biblioteche(None)  # riempio le dropdown
+        self.controller.handler_btn_genere(None)
 
     def cambia_tema(self, e):
         """ Cambia tema scuro/chiaro """
